@@ -1,0 +1,20 @@
+{
+  "name": "wizard-snmpd",
+  "author": "wizard",
+  "description": "",
+  "license": "",
+  "project_page": "",
+  "source": "",
+  "summary": "",
+  "version": "",
+  "checksums": {
+    "Modulefile": "bef23a0f5b4a6fb89b7f9ee0530edb1c",
+    "README.markdown": "984486e79ed22d55f5b0889f4ddba753",
+    "Rakefile": "f37e6131fe7de9a49b09d31596f5fbf1",
+    "manifests/init.pp": "e887528f3cfdb7d8aef7739c1cc75fdb",
+    "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
+    "spec/spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0",
+    "tests/init.pp": "58013672dd35e413df216be1fc76fb53"
+  },
+  "dependencies": []
+}
