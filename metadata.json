@@ -13,8 +13,8 @@
     "README.markdown": "984486e79ed22d55f5b0889f4ddba753",
     "Rakefile": "f37e6131fe7de9a49b09d31596f5fbf1",
     "files/snmpd.conf": "bd5b990ab10f86786a5e6e1f256647c0",
-    "manifests/init.pp": "64f4eb65356498be1772990b2ebe4a13",
-    "spec/classes/snmpd_spec.rb": "8d809200b53c253fba89f61afd97ffab",
+    "manifests/init.pp": "f3086ecf24cf8bce22481bbf57bc17bd",
+    "spec/classes/snmpd_spec.rb": "429aa44eb3bd3562230c4b0addc81f98",
     "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
     "spec/spec_helper.rb": "b2d8d97b5a2aa5ad8f1aff426109a587",
     "tests/init.pp": "58013672dd35e413df216be1fc76fb53"

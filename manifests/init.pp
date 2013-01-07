@@ -22,7 +22,7 @@ exec {'snmpv3-user-icingamonitor':
 -A "9QZeqv+1x9Jx6Epkx]9FN9iw%um" -X "9QZeqv+1x9Jx6Epkx]9FN9iw%um" \
 -a SHA -x AES icingamonitor && \
 /usr/sbin/service snmpd start',
-  unless    => 'grep "0x6963696e67616d6f6e69746f7200" \
+  unless    => '/bin/grep "0x6963696e67616d6f6e69746f7200" \
 /var/lib/net-snmp/snmpd.conf'
 }
 
