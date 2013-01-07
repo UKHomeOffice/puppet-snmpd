@@ -8,12 +8,15 @@
   "summary": "",
   "version": "",
   "checksums": {
+    ".fixtures.yml": "5e1ef607241fc357a977c9a67bc9fd45",
     "Modulefile": "bef23a0f5b4a6fb89b7f9ee0530edb1c",
     "README.markdown": "984486e79ed22d55f5b0889f4ddba753",
     "Rakefile": "f37e6131fe7de9a49b09d31596f5fbf1",
-    "manifests/init.pp": "e887528f3cfdb7d8aef7739c1cc75fdb",
+    "files/snmpd.conf": "bd5b990ab10f86786a5e6e1f256647c0",
+    "manifests/init.pp": "00dd87549a610a51291143bc50ee6b99",
+    "spec/classes/snmpd_spec.rb": "735c6c398690a6470ebca2a87fb093ed",
     "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
-    "spec/spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0",
+    "spec/spec_helper.rb": "b2d8d97b5a2aa5ad8f1aff426109a587",
     "tests/init.pp": "58013672dd35e413df216be1fc76fb53"
   },
   "dependencies": []
