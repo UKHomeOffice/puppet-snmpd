@@ -10,11 +10,11 @@ describe 'snmpd', :type => :class do
   context 'ensure snmpv3 user in database' do
     it {
       should contain_exec('snmpv3-user-icingamonitor').with(
-                                                  'command' => '/usr/sbin/service snmpd stop && \
+                                                  'command' => '/sbin/service snmpd stop && \
 /usr/bin/net-snmp-create-v3-user -ro \
 -A "9QZeqv+1x9Jx6Epkx]9FN9iw%um" -X "9QZeqv+1x9Jx6Epkx]9FN9iw%um" \
 -a SHA -x AES icingamonitor && \
-/usr/sbin/service snmpd start',
+/sbin/service snmpd start',
                                                   'unless' => '/bin/grep "0x6963696e67616d6f6e69746f7200" \
 /var/lib/net-snmp/snmpd.conf'
                                                   )
