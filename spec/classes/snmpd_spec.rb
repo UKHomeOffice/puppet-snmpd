@@ -44,6 +44,7 @@ describe 'snmpd', :type => :class do
                                             'owner' => 'root',
                                             'group' => 'root',
                                             'source' => 'puppet:///modules/snmpd.conf',
+                                            'path' => '/etc/snmp/snmpd.conf',
                                             'mode' => '0664'
                                             )
     }
