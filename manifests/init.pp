@@ -31,7 +31,7 @@ file {'snmpd.conf':
   owner   => 'root',
   group   => 'root',
   mode    => '0664',
-  source  => 'puppet:///modules/snmpd.conf',
+  source  => 'puppet:///modules/snmp/snmpd.conf',
   path    => '/etc/snmp/snmpd.conf',
   notify  => Service['snmpd']
 }
