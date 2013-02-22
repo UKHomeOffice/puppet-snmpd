@@ -1,0 +1,18 @@
+
+# /
+/fixtures
+
+# /files/
+/files/fixtures
+
+# /manifests/
+/manifests/fixtures
+
+# /spec/
+/spec/fixtures
+
+# /spec/classes/
+/spec/classes/fixtures
+
+# /tests/
+/tests/fixtures
