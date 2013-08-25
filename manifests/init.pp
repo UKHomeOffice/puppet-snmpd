@@ -223,6 +223,7 @@ class snmpd (
   $content             = params_lookup( 'content' ),
   $service_autorestart = params_lookup( 'service_autorestart' , 'global' ),
   $options             = params_lookup( 'options' ),
+  $users               = params_lookup( 'users' ),
   $version             = params_lookup( 'version' ),
   $absent              = params_lookup( 'absent' ),
   $disable             = params_lookup( 'disable' ),

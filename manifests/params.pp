@@ -110,6 +110,8 @@ class snmpd::params {
     default => '',
   }
 
+  $var_net_snmp = '/var/net/snmp'
+
   $port = '161'
   $protocol = 'udp'
 
@@ -121,6 +123,7 @@ class snmpd::params {
   $template = ''
   $content = ''
   $options = ''
+  $users  = ''
   $service_autorestart = true
   $version = 'present'
   $absent = false
