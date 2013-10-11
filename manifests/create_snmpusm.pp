@@ -1,7 +1,7 @@
 #
 # Defines a snmpd user
 #
-define snmpd::create_user (
+define snmpd::create_snmpusm {
   $authtype = 'SHA',
   $privtype = 'AES',
   $authpass = '',
