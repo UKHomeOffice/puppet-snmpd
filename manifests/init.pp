@@ -210,7 +210,7 @@ class snmpd (
 
   $require_package = $snmpd::package ? {
     ''      => undef,
-    default => Package['snmpd'],
+    default => $snmpd::package
   }
 
   $manage_service_enable = $snmpd::bool_disableboot ? {
@@ -263,10 +263,8 @@ class snmpd (
   }
 
   ### Managed resources
-  if $snmpd::package {
-    package { $snmpd::package:
-      ensure => $snmpd::manage_package,
-    }
+  package { $snmpd::package:
+    ensure => $snmpd::manage_package,
   }
 
   service { 'snmpd':
@@ -275,7 +273,7 @@ class snmpd (
     enable     => $snmpd::manage_service_enable,
     hasstatus  => $snmpd::service_status,
     pattern    => $snmpd::process,
-    require    => $require_package,
+    require    => Datacat[$snmpd::config_file]
   }
 
   datacat { 'snmpd.conf':
@@ -283,7 +281,7 @@ class snmpd (
     mode     => $snmpd::config_file_mode,
     owner    => $snmpd::config_file_owner,
     group    => $snmpd::config_file_group,
-    require  => $require_package,
+    require  => Package[$snmpd::require_package],
     notify   => $snmpd::manage_service_autorestart,
     template => $snmpd::manage_file_content,
     replace  => $snmpd::manage_file_replace,
@@ -291,13 +289,17 @@ class snmpd (
   }
 
   datacat_fragment { 'snmp.options':
-    target => $snmpd::manage_file_content,
-      data => {
+    target => $snmpd::config_file,
+      data =>  {
         sysLocation => $snmpd::sysname,
         sysName     => $snmpd::syslocation,
         sysContact  => $snmpd::syscontact,
       },
   }
+
+  # Hiera can be used to create specific logic for define "create_snmpusm"
+  $snmpd_create_snmpusm = hiera_hash('snmpd::create_snmpusm', [])
+  create_resources('snmpd::create_snmpusm', $snmpd_create_snmpusm)
 
   # The whole snmpd configuration directory can be recursively overriden
   if $snmpd::source_dir {

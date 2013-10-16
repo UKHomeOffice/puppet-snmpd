@@ -95,7 +95,7 @@ class snmpd::params {
   $source = ''
   $source_dir = ''
   $source_dir_purge = false
-  $template = 'snmpd/spec.erb'
+  $template = 'snmpd/snmpd.conf.erb'
   $content = ''
   $options = ''
   $users  = ''
