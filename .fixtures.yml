@@ -1,4 +1,8 @@
 fixtures:
+  repositories:
+    "common": "ssh://git.bigdata.bskyb.com/git/infra-puppet-common.git"
+    "datacat": "ssh://git.bigdata.bskyb.com/git/infra-puppet-datacat.git"
+
   symlinks:
     snmpd: "#{source_dir}"
     
