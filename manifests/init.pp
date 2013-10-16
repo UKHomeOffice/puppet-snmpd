@@ -166,7 +166,7 @@ class snmpd (
   $template            = params_lookup( 'template' ),
   $content             = params_lookup( 'content' ),
   $service_autorestart = params_lookup( 'service_autorestart' , 'global' ),
-  $options             = params_lookup( 'options' ),
+  $options             = hiera_hash( 'options', [] ),
   $users               = params_lookup( 'users' ),
   $version             = params_lookup( 'version' ),
   $uninstall           = params_lookup( 'uninstall' ),
@@ -298,8 +298,7 @@ class snmpd (
   }
 
   # Hiera can be used to create specific logic for define "create_snmpusm"
-  $snmpd_create_snmpusm = hiera_hash('snmpd::create_snmpusm', [])
-  create_resources('snmpd::create_snmpusm', $snmpd_create_snmpusm)
+  create_resources('snmpd::create_snmpusm', $snmpd::options)
 
   # The whole snmpd configuration directory can be recursively overriden
   if $snmpd::source_dir {
