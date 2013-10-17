@@ -273,10 +273,10 @@ class snmpd (
     enable     => $snmpd::manage_service_enable,
     hasstatus  => $snmpd::service_status,
     pattern    => $snmpd::process,
-    require    => Datacat['snmpd.conf']
+    require    => Datacat["${snmpd::config_file}"],
   }
 
-  datacat { 'snmpd.conf':
+  datacat { "${snmpd::config_file}":
     path     => $snmpd::config_file,
     mode     => $snmpd::config_file_mode,
     owner    => $snmpd::config_file_owner,
