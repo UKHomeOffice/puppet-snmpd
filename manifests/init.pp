@@ -276,7 +276,7 @@ class snmpd (
     require    => Package["$snmpd::package"],
   }
 
-  datacat { "${snmpd::config_file}":
+  datacat { 'snmpd.conf':
     path     => $snmpd::config_file,
     mode     => $snmpd::config_file_mode,
     owner    => $snmpd::config_file_owner,
