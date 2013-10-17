@@ -21,23 +21,23 @@ define snmpd::create_snmpusm (
     $createcmd = "createUser ${title} ${authtype} ${authpass}"
   }
 
-  $check_usm_user_exists = "/bin/awk \'/^usmUser/ {print \$5}\' ${snmpd::params::var_net_snmpd}/snmpd.conf | xxd -r -p | grep ${title} > /dev/null 2>&1"
+  $check_usm_user_exists = "/bin/awk \'/^usmUser/ {print \$5}\' ${snmpd::params::var_net_snmp}/snmpd.conf | xxd -r -p | /bin/grep ${title} > /dev/null 2>&1"
 
-  datacat_fragment {"${title} - create snmpv3 usm user":
+  datacat_fragment {"var_net_snmp_${title}":
     target => "${icinga::manage_file_content}",
       data => {
-        "${title}" => {
+        usmuser => [ {
           acl       => $acl,
-          #usmuser   => $title,
+          usmuser   => $title,
           secmode   => $secmode,
-        },
+        } ],
       },
   }
 
   exec { "create_auth_user_${title}":
     user     => 'root',
-    command  => "service ${snmpd::service_name} stop ; echo \"${createcmd}\" >>${snmpd::params::var_net_snmp}/snmpd.conf",
+    command  => "/sbin/service ${snmpd::service_name} stop ; /bin/echo \"${createcmd}\" >>${snmpd::params::var_net_snmp}/snmpd.conf",
     unless   => $check_usm_user_exists,
-    require  => File['var_net_snmp'],
+ #   require  => Datacat_fragment["var_net_snmp_${title}"],
   }
 }
