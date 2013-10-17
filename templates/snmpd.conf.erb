@@ -4,8 +4,10 @@ sysName <%= @data['sysname'] %>
 sysLocation <%= @data['syslocation'] %> 
 sysContact <%= @data['syscontact'] %>
 sysServices 76
+<% if @data['usmuser'] %>
 <% @data['usmuser'].each do |user| %>
 <%= user['acl'] %> <%= user['user'] %> <%= user['secmode'] %>
+<% end %>
 <% end %>
 skipNFSInHostResources true
 storageUseNFS 1

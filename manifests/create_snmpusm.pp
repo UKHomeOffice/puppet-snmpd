@@ -26,11 +26,13 @@ define snmpd::create_snmpusm (
   datacat_fragment {"var_net_snmp_${title}":
     target => "${snmpd::config_file}",
       data => {
-        usmuser => [ {
-          acl     => $acl,
-          user    => $title,
-          secmode => $secmode,
-        } ],
+        usmuser => [
+          {
+            acl     => "${acl}",
+            user    => "${title}",
+            secmode => "${secmode}",
+          }
+        ],
       },
   }
 
