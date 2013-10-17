@@ -5,7 +5,7 @@ sysLocation <%= @data['syslocation'] %>
 sysContact <%= @data['syscontact'] %>
 sysServices 76
 <% @data['usmuser'].each do |user| %>
-<%= user['acl'] %> <%= user['usmuser'] %> <%= user['secmode'] %>
+<%= user['acl'] %> <%= user['user'] %> <%= user['secmode'] %>
 <% end %>
 skipNFSInHostResources true
 storageUseNFS 1

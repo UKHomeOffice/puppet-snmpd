@@ -24,12 +24,12 @@ define snmpd::create_snmpusm (
   $check_usm_user_exists = "awk \'/^usmUser/ {print \$5}\' ${snmpd::params::var_net_snmp}/snmpd.conf | xxd -r -p | /bin/grep ${title} > /dev/null 2>&1"
 
   datacat_fragment {"var_net_snmp_${title}":
-    target => "${snmpd::manage_file_content}",
+    target => "${snmpd::config_file}",
       data => {
         usmuser => [ {
-          acl       => $acl,
-          usmuser   => $title,
-          secmode   => $secmode,
+          acl     => $acl,
+          user    => $title,
+          secmode => $secmode,
         } ],
       },
   }
