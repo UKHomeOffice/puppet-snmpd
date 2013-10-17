@@ -291,15 +291,15 @@ class snmpd (
   datacat_fragment { 'snmp.options':
     target => $snmpd::config_file,
       data =>  {
-        syslocation => "$snmpd::snmplocation",
-        sysname     => "$snmpd::snmpname",
-        syscontact  => "$snmpd::snmpcontact",
+        syslocation => $snmpd::snmplocation,
+        sysname     => $snmpd::snmpname,
+        syscontact  => $snmpd::snmpcontact,
       },
   }
 
   # Hiera can be used to create specific logic for define "create_snmpusm"
- # create_resources('snmpd::create_snmpusm', $snmpd::options)
-  #notify {"$snmpd::options":}
+  create_resources('snmpd::create_snmpusm', $snmpd::options)
+
   # The whole snmpd configuration directory can be recursively overriden
   if $snmpd::source_dir {
     file { 'snmpd.dir':
