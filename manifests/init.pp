@@ -276,7 +276,7 @@ class snmpd (
     require    => Package["${snmpd::package}"],
   }
 
-  datacat { 'snmpd.conf':
+  datacat { "${snmpd::config_file}":
     path     => $snmpd::config_file,
     mode     => $snmpd::config_file_mode,
     owner    => $snmpd::config_file_owner,
@@ -288,7 +288,7 @@ class snmpd (
     audit    => $snmpd::manage_audit,
   }
 
-  datacat_fragment { 'snmp.options':
+  datacat_fragment { 'snmpd.options':
     target => $snmpd::config_file,
       data =>  {
         syslocation => $snmpd::snmplocation,

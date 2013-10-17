@@ -11,7 +11,7 @@ describe 'snmpd' do
     it { should contain_package('snmpd').with_ensure('present') }
     it { should contain_service('snmpd').with_ensure('running') }
     it { should contain_service('snmpd').with_enable('true') }
-    it { should contain_datacat('snmpd.conf').with_path('/etc/snmp/snmpd.conf') }
+    it { should contain_datacat_fragment('snmpd.options').with_target('/etc/snmp/snmpd.conf') }
   end
 
   describe 'Test installation of a specific version' do
@@ -42,7 +42,7 @@ describe 'snmpd' do
     it { should_not contain_service('snmpd').with_ensure('present') }
     it { should_not contain_service('snmpd').with_ensure('absent') }
     it 'should not enable at boot Service[snmpd]' do should contain_service('snmpd').with_enable('false') end
-    it { should contain_datacat('snmpd.conf').with_path('/etc/snmp/snmpd.conf') }
+    it { should contain_datacat_fragment('snmpd.options').with_target('/etc/snmp/snmpd.conf') }
   end 
 =begin 
   describe 'Test customizations - source' do
@@ -64,14 +64,14 @@ describe 'snmpd' do
 =end 
 
   describe 'Test service autorestart' do
-    it { should contain_datacat('snmpd.conf').with_notify('Service[snmpd]') }
+    it { should contain_datacat('/etc/snmp/snmpd.conf').with_notify('Service[snmpd]') }
   end
 
   describe 'Test service autorestart' do
     let(:params) { {:service_autorestart => "no" } }
 
     it 'should not automatically restart the service, when service_autorestart => false' do
-      content = catalogue.resource('datacat', 'snmpd.conf').send(:parameters)[:notify]
+      content = catalogue.resource('datacat', '/etc/snmp/snmpd.conf').send(:parameters)[:notify]
       content.should be_nil
     end
   end
