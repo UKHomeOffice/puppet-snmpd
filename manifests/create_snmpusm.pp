@@ -37,7 +37,7 @@ define snmpd::create_snmpusm (
   }
 
   exec { "create_auth_user_${title}":
-    path     => '/usr/bin:/usr/sbin:/bin',
+    path     => '/usr/bin:/usr/sbin:/bin:/sbin',
     user     => 'root',
     command  => "service ${snmpd::service_name} stop ; echo \"${createcmd}\" >>${snmpd::params::var_net_snmp}/snmpd.conf",
     unless   => $check_usm_user_exists,
