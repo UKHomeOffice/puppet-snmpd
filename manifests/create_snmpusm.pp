@@ -11,7 +11,7 @@
 #
 # === Copyright
 #
-define itv_snmpd_hiera::create_snmpusm (
+define snmpd::create_snmpusm (
   $authtype = 'SHA',
   $privtype = 'AES',
   $authpass = '',
@@ -20,8 +20,8 @@ define itv_snmpd_hiera::create_snmpusm (
   $secmode  = 'noauth',
 ) {
 
-  include itv_snmpd_hiera
-  include itv_snmpd_hiera::params
+  include snmpd
+  include snmpd::params
 
   validate_re($secmode,'^noauth$|^auth$|^priv$')
   validate_re($acl,'^rouser$|^rwuser$')
@@ -41,11 +41,11 @@ define itv_snmpd_hiera::create_snmpusm (
     $createcmd = "createUser ${title} ${authtype} ${authpass}"
   }
 
-  $check_usm_user_exists = "awk \'/^usmUser/ {print \$5}\' ${itv_snmpd_hiera::params::var_net_snmp}/snmpd.conf | xxd -r -p | grep ${title} > /dev/null 2>&1"
+  $check_usm_user_exists = "awk \'/^usmUser/ {print \$5}\' ${snmpd::params::var_net_snmp}/snmpd.conf | xxd -r -p | grep ${title} > /dev/null 2>&1"
 
-  if $itv_snmpd_hiera::config_file {
+  if $snmpd::config_file {
     datacat_fragment {"var_net_snmp_${title}":
-      target => $itv_snmpd_hiera::config_file,
+      target => $snmpd::config_file,
         data => {
           usmuser => [{
             acl     => $acl,
@@ -58,10 +58,10 @@ define itv_snmpd_hiera::create_snmpusm (
     exec {"create_auth_user_${title}":
       path    => '/bin:/usr/bin:/sbin:/usr/sbin',
       user    => 'root',
-      command => "/etc/init.d/${itv_snmpd_hiera::service_name} stop && echo \"${createcmd}\" >> ${itv_snmpd_hiera::params::var_net_snmp}/snmpd.conf",
+      command => "/etc/init.d/${snmpd::service_name} stop && echo \"${createcmd}\" >> ${snmpd::params::var_net_snmp}/snmpd.conf",
       unless  => $check_usm_user_exists,
     }
 
-    Package[$itv_snmpd_hiera::package_name] -> Datacat_fragment["var_net_snmp_${title}"] -> Exec["create_auth_user_${title}"]
+    Package[$snmpd::package_name] -> Datacat_fragment["var_net_snmp_${title}"] -> Exec["create_auth_user_${title}"]
   }
 }

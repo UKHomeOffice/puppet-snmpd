@@ -1,6 +1,6 @@
-# == Class: itv_snmpd_hiera
+# == Class: snmpd
 #
-# This module manages itv_snmpd_hiera
+# This module manages snmpd
 #
 # == Parameters:
 #
@@ -68,7 +68,7 @@
 #
 # Sample Usage:
 #
-class itv_snmpd_hiera (
+class snmpd (
 
   $snmpname             = $::fqdn,
   $snmplocation         = 'Server Room',
@@ -78,29 +78,29 @@ class itv_snmpd_hiera (
   $version              = undef,
   $audit_only           = undef,
 
-  $package_name         = $itv_snmpd_hiera::params::package_name,
+  $package_name         = $snmpd::params::package_name,
 
-  $service_name         = $itv_snmpd_hiera::params::service_name,
+  $service_name         = $snmpd::params::service_name,
   $service_ensure       = running,
   $service_enable       = true,
 
-  $config_file          = $itv_snmpd_hiera::params::config_file,
-  $config_file_owner    = $itv_snmpd_hiera::params::config_file_owner,
-  $config_file_group    = $itv_snmpd_hiera::params::config_file_group,
-  $config_file_mode     = $itv_snmpd_hiera::params::config_file_mode,
+  $config_file          = $snmpd::params::config_file,
+  $config_file_owner    = $snmpd::params::config_file_owner,
+  $config_file_group    = $snmpd::params::config_file_group,
+  $config_file_mode     = $snmpd::params::config_file_mode,
   $config_file_replace  = true,
   $config_file_content  = undef,
   $config_file_source   = undef,
-  $config_file_template = $itv_snmpd_hiera::params::config_file_template,
+  $config_file_template = $snmpd::params::config_file_template,
 
-  $config_dir_path      = $itv_snmpd_hiera::params::config_dir_path,
+  $config_dir_path      = $snmpd::params::config_dir_path,
   $config_dir_source    = undef,
   $config_dir_purge     = false,
   $config_dir_recurse   = false,
 
   $conf_hash            = undef
 
-  ) inherits itv_snmpd_hiera::params {
+  ) inherits snmpd::params {
 
   # Parameter validation
   validate_re($ensure, ['present','absent'], 'Valid values are: present, absent. WARNING: If set to absent all the resources managed by the module are removed.')
@@ -110,98 +110,98 @@ class itv_snmpd_hiera (
   validate_bool($config_dir_recurse)
   if $conf_hash { validate_hash($conf_hash) }
 
-  if $itv_snmpd_hiera::config_file_content {
-    $managed_file_content = $itv_snmpd_hiera::config_file_content
+  if $snmpd::config_file_content {
+    $managed_file_content = $snmpd::config_file_content
   } else {
-    if $itv_snmpd_hiera::config_file_template {
-      $managed_file_content = $itv_snmpd_hiera::config_file_template
+    if $snmpd::config_file_template {
+      $managed_file_content = $snmpd::config_file_template
     } else {
       $managed_file_content = undef
     }
   }
   # Determine behaviour of module based on the values used
 
-  if $itv_snmpd_hiera::version {
-    $managed_package_ensure = $itv_snmpd_hiera::version
+  if $snmpd::version {
+    $managed_package_ensure = $snmpd::version
   } else {
-    $managed_packaged_ensure = $itv_snmpd_hiera::ensure
+    $managed_packaged_ensure = $snmpd::ensure
   }
 
-  if $itv_snmpd_hiera::ensure == 'absent' {
+  if $snmpd::ensure == 'absent' {
     $managed_service_enable = undef
     $managed_service_ensure = stopped
     $dir_ensure = absent
     $file_ensure = absent
   } else {
-    $managed_service_enable = $itv_snmpd_hiera::service_enable
-    $managed_service_ensure = $itv_snmpd_hiera::service_ensure
+    $managed_service_enable = $snmpd::service_enable
+    $managed_service_ensure = $snmpd::service_ensure
     $dir_ensure = directory
     $file_ensure = present
   }
 
   # Managed Resources
 
-  if $itv_snmpd_hiera::package_name {
-    package { $itv_snmpd_hiera::package_name:
-      ensure => $itv_snmpd_hiera::managed_package_ensure,
+  if $snmpd::package_name {
+    package { $snmpd::package_name:
+      ensure => $snmpd::managed_package_ensure,
     }
   }
 
-  if $itv_snmpd_hiera::service_name {
-    service { $itv_snmpd_hiera::service_name:
-      ensure  => $itv_snmpd_hiera::managed_service_ensure,
-      enable  => $itv_snmpd_hiera::managed_service_enable,
-      require => Package[$itv_snmpd_hiera::package_name]
+  if $snmpd::service_name {
+    service { $snmpd::service_name:
+      ensure  => $snmpd::managed_service_ensure,
+      enable  => $snmpd::managed_service_enable,
+      require => Package[$snmpd::package_name]
     }
   }
 
-  if $itv_snmpd_hiera::config_file and $itv_snmpd_hiera::config_file_content {
+  if $snmpd::config_file and $snmpd::config_file_content {
     file { 'snmpd.conf':
-      ensure  => $itv_snmpd_hiera::config_file_ensure,
-      path    => $itv_snmpd_hiera::config_file,
-      mode    => $itv_snmpd_hiera::config_file_mode,
-      owner   => $itv_snmpd_hiera::config_file_owner,
-      group   => $itv_snmpd_hiera::config_file_group,
-      require => Package[$itv_snmpd_hiera::package_name],
-      notify  => Service[$itv_snmpd_hiera::service_name],
-      source  => $itv_snmpd_hiera::config_file_source,
-      replace => $itv_snmpd_hiera::config_file_replace,
-      audit   => $itv_snmpd_hiera::manage_audit,
+      ensure  => $snmpd::config_file_ensure,
+      path    => $snmpd::config_file,
+      mode    => $snmpd::config_file_mode,
+      owner   => $snmpd::config_file_owner,
+      group   => $snmpd::config_file_group,
+      require => Package[$snmpd::package_name],
+      notify  => Service[$snmpd::service_name],
+      source  => $snmpd::config_file_source,
+      replace => $snmpd::config_file_replace,
+      audit   => $snmpd::manage_audit,
     }
   } else {
-    if $itv_snmpd_hiera::config_file {
-      datacat { $itv_snmpd_hiera::config_file:
-        path     => $itv_snmpd_hiera::config_file,
-        mode     => $itv_snmpd_hiera::config_file_mode,
-        owner    => $itv_snmpd_hiera::config_file_owner,
-        group    => $itv_snmpd_hiera::config_file_group,
-        notify   => Service[$itv_snmpd_hiera::service_name],
-        require  => Package[$itv_snmpd_hiera::package_name],
-        template => $itv_snmpd_hiera::managed_file_content,
-        replace  => $itv_snmpd_hiera::config_file_replace,
+    if $snmpd::config_file {
+      datacat { $snmpd::config_file:
+        path     => $snmpd::config_file,
+        mode     => $snmpd::config_file_mode,
+        owner    => $snmpd::config_file_owner,
+        group    => $snmpd::config_file_group,
+        notify   => Service[$snmpd::service_name],
+        require  => Package[$snmpd::package_name],
+        template => $snmpd::managed_file_content,
+        replace  => $snmpd::config_file_replace,
       }
 
       datacat_fragment { 'snmpd.options':
-	target => $itv_snmpd_hiera::config_file,
+	target => $snmpd::config_file,
 	data   => {
-	  sysname     => $itv_snmpd_hiera::snmpname,
-	  syslocation => $itv_snmpd_hiera::snmplocation,
-	  syscontact  => $itv_snmpd_hiera::snmpcontact,
+	  sysname     => $snmpd::snmpname,
+	  syslocation => $snmpd::snmplocation,
+	  syscontact  => $snmpd::snmpcontact,
 	},
       }
     }
   }
 
-  if $itv_snmpd_hiera::config_dir_source {
+  if $snmpd::config_dir_source {
     file { 'snmpd.dir':
-      ensure  => $itv_snmpd_hiera::config_dir_ensure,
-      path    => $itv_snmpd_hiera::config_dir,
-      source  => $itv_snmpd_hiera::config_dir_source,
-      recurse => $itv_snmpd_hiera::config_dir_recurse,
-      purge   => $itv_snmpd_hiera::config_dir_purge,
-      force   => $itv_snmpd_hiera::config_dir_purge,
-      notify  => Service[$itv_snmpd_hiera::service_name],
-      require => Package[$itv_snmpd_hiera::package_name],
+      ensure  => $snmpd::config_dir_ensure,
+      path    => $snmpd::config_dir,
+      source  => $snmpd::config_dir_source,
+      recurse => $snmpd::config_dir_recurse,
+      purge   => $snmpd::config_dir_purge,
+      force   => $snmpd::config_dir_purge,
+      notify  => Service[$snmpd::service_name],
+      require => Package[$snmpd::package_name],
     }
   }
 

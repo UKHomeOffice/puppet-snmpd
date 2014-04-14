@@ -1,4 +1,4 @@
-# == Class: itv_snmpd::params
+# == Class: snmpd::params
 # This class defines default parameters used by the main modules class snmpd
 # Operating Systems differences in names and paths are addressed here
 #
@@ -11,7 +11,7 @@
 # This class is not intended to be used directly.
 # It may be imported or inherited by other classes
 #
-class itv_snmpd_hiera::params {
+class snmpd::params {
 
   $package_name = $::osfamily ? {
     /(?i:RedHat)/ => 'net-snmp',
@@ -38,7 +38,7 @@ class itv_snmpd_hiera::params {
     default => 'root'
   }
 
-  $config_file_template = 'itv_snmpd_hiera/snmpd.conf.erb'
+  $config_file_template = 'snmpd/snmpd.conf.erb'
 
   $config_file_mode = $::osfamily ? {
     default => '0644'
