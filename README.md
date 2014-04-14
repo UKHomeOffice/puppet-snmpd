@@ -1,42 +1,19 @@
 # Puppet module: snmpd
 
-This is a Puppet module for snmpd based on the second generation layout ("NextGen") of Example42 Puppet Modules.
-
-Made by Alessandro Franceschi / Lab42
-
-Official site: http://www.example42.com
-
-Official git repository: http://github.com/example42/puppet-snmpd
-
-Released under the terms of Apache 2 License.
-
-This module requires functions provided by the Example42 Puppi module (you need it even if you don't use and install Puppi)
-
-For detailed info about the logic and usage patterns of Example42 modules check the DOCS directory on Example42 main modules set.
+This is a Puppet module for snmpd.
+It manages its installation, configuration and service.
 
 ## USAGE - Basic management
 
-* Install snmpd with working defaults:
-
-        class { 'snmpd':
-          template     => 'snmpd/snmpd.conf.erb',
-          snmplocation => 'Building 4, Rack 12',
-          snmpcontact  => 'noc@company.example42',
-          options      => {
-            'com2sec readonly default'        => 'public',
-            'group MyROGroup v1'              => 'readonly',
-            'group MyROGroup v2c'             => 'readonly',
-            'group MyROGroup usm'             => 'readonly',
-            'view all    included  .1'        => '80',
-            'access MyROGroup ""'             => 'any       noauth    exact  all    none   none',
-            'extend .1.3.6.1.4.1.2021.7890.1' => 'distro /usr/bin/distro # Observium: host os detection',
-            'dontLogTCPWrappersConnects'      => 'true # To keep "snmpd[3458]: Connection from UDP: [127.0.0.1]:48911" from filling your logs'
-          }
-        }
-
-* Install snmpd with default settings
+* Install snmpd with default settings (package installed, service started, default configuration files)
 
         class { 'snmpd': }
+
+* Remove snmpd package and purge all the managed files
+
+        class { 'snmpd':
+          ensure => absent,
+        }
 
 * Install a specific version of snmpd package
 
@@ -44,90 +21,78 @@ For detailed info about the logic and usage patterns of Example42 modules check 
           version => '1.0.1',
         }
 
-* Disable snmpd service.
+* Install the latest version of snmpd package
 
         class { 'snmpd':
-          disable => true
+          version => 'latest',
         }
 
-* Remove snmpd package
+* Enable snmpd service. This is default.
 
         class { 'snmpd':
-          absent => true
+          service_ensure => 'running',
         }
 
-* Enable auditing without without making changes on existing snmpd configuration files
+* Enable snmpd service at boot. This is default.
 
         class { 'snmpd':
-          audit_only => true
+          service_status => 'enabled',
+        }
+
+
+* Do not automatically restart services when configuration files change (Default: Class['snmpd::config']).
+
+        class { 'snmpd':
+          service_subscribe => false,
+        }
+
+* Enable auditing (on all the arguments)  without making changes on existing snmpd configuration *files*
+
+        class { 'snmpd':
+          audit => 'all',
+        }
+
+* Module dry-run: Do not make any change on *all* the resources provided by the module
+
+        class { 'snmpd':
+          noop => true,
         }
 
 
 ## USAGE - Overrides and Customizations
-* Use custom sources for main config file 
+## Some of these options have not been implemented
+* Use custom source for main configuration file 
 
         class { 'snmpd':
-          source => [ "puppet:///modules/example42/snmpd/snmpd.conf-${hostname}" , "puppet:///modules/example42/snmpd/snmpd.conf" ], 
+          file_source => "puppet:///modules/snmpd/snmpd.conf-${hostname}" ,
+                         
         }
 
 
-* Use custom source directory for the whole configuration dir
+* Use custom source directory for the whole configuration dir.
 
         class { 'snmpd':
-          source_dir       => 'puppet:///modules/example42/snmpd/conf/',
-          source_dir_purge => false, # Set to true to purge any existing file not present in $source_dir
+          dir_source  => 'puppet:///modules/snmpd/conf/',
         }
 
-* Use custom template for main config file. Note that template and source arguments are alternative. 
+* Use custom source directory for the whole configuration dir purging all the local files that are not on the dir.
+  Note: This option can be used to be sure that the content of a directory is exactly the same you expect, but it is desctructive and may remove files.
 
         class { 'snmpd':
-          template => 'example42/snmpd/snmpd.conf.erb',
+          dir_source => 'puppet:///modules/snmpd/conf/',
+          dir_purge  => true, # Default: false.
         }
 
-* Manage directly the content of the main config file. Note that template has precedence over content.
+* Use custom source directory for the whole configuration dir and define recursing policy.
 
         class { 'snmpd':
-          content => inline_template(
-            file( "$settings::modulepath/example42/templates/snmpd/snmpd.conf.erb-${hostname}",
-                  "$settings::modulepath/example42/templates/snmpd/snmpd.conf.erb" ) ),
+          dir_source    => 'puppet:///modules/snmpd/conf/',
+          dir_recursion => false, # Default: true.
         }
 
-* Automatically include a custom subclass
+* Use custom template for main config file. Note that template and source arguments are alternative.
 
         class { 'snmpd':
-          my_class => 'example42::my_snmpd',
+          file_template => 'snmpd/snmpd.conf.erb',
         }
 
-
-## USAGE - Example42 extensions management 
-* Activate puppi (recommended, but disabled by default)
-
-        class { 'snmpd':
-          puppi    => true,
-        }
-
-* Activate puppi and use a custom puppi_helper template (to be provided separately with a puppi::helper define ) to customize the output of puppi commands 
-
-        class { 'snmpd':
-          puppi        => true,
-          puppi_helper => 'myhelper', 
-        }
-
-* Activate automatic monitoring (recommended, but disabled by default). This option requires the usage of Example42 monitor and relevant monitor tools modules
-
-        class { 'snmpd':
-          monitor      => true,
-          monitor_tool => [ 'nagios' , 'monit' , 'munin' ],
-        }
-
-* Activate automatic firewalling. This option requires the usage of Example42 firewall and relevant firewall tools modules
-
-        class { 'snmpd':       
-          firewall      => true,
-          firewall_tool => 'iptables',
-          firewall_src  => '10.42.0.0/24',
-          firewall_dst  => $ipaddress_eth0,
-        }
-
-
-[![Build Status](https://travis-ci.org/example42/puppet-snmpd.png?branch=master)](https://travis-ci.org/example42/puppet-snmpd)

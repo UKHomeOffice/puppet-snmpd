@@ -1,146 +1,54 @@
-# Class: snmpd::params
-#
-# This class defines default parameters used by the main module class snmpd
+# == Class: itv_snmpd::params
+# This class defines default parameters used by the main modules class snmpd
 # Operating Systems differences in names and paths are addressed here
 #
-# == Variables
+# === Variables
 #
 # Refer to snmpd class for the variables defined here.
 #
-# == Usage
+# === Usage
 #
 # This class is not intended to be used directly.
 # It may be imported or inherited by other classes
 #
-class snmpd::params {
+class itv_snmpd_hiera::params {
 
-  $snmpname = $::fqdn
-  $snmplocation = ""
-  $snmpcontact = ""
-
-  ### Application related parameters
-
-  $package = $::operatingsystem ? {
-    /(?i:Solaris)/                               => $::operatingsystemrelease ? {
-      '5.10' => [ 'SUNWsmmgr' , 'SUNWsmagt' , 'SUNWsasnm' , 'SUNWsacom' ],
-      '5.11' => 'net-snmp',
-    },
-    /(?i:RedHat|Centos|Scientific|Linux|Amazon)/ => 'net-snmp',
-    /(?i:OpenBSD)/                               => '',
-    default                                      => 'snmpd',
+  $package_name = $::osfamily ? {
+    /(?i:RedHat)/ => 'net-snmp',
+    default              => 'snmpd'
   }
 
-  $service = $::operatingsystem ? {
-    /(?i:Solaris)/ => $::operatingsystemrelease ? {
-      '5.10' => 'snmpx',
-      '5.11' => 'net-snmp',
-    },
-    default        => 'snmpd',
-  }
-
-  $service_status = $::operatingsystem ? {
-    default => true,
-  }
-
-  $process = $::operatingsystem ? {
+  $service_name = $::osfamily ? {
     default => 'snmpd',
   }
 
-  $process_args = $::operatingsystem ? {
-    default => '',
+  $config_dir = $::osfamily ? {
+    default => '/etc/snmp'
   }
 
-  $process_user = $::operatingsystem ? {
-    default => 'root',
+  $config_file = $::osfamily ? {
+    default => "${config_dir}/snmpd.conf"
   }
 
-  $config_dir = $::operatingsystem ? {
-    /(?i:Solaris)/  => $::operatingsystemrelease ? {
-      '5.10' => '/etc/snmp/conf',
-      '5.11' => '/etc/net-snmp/snmp',
+  $config_file_owner = $::osfamily ? {
+    default => 'root'
+  }
+
+  $config_file_group = $::osfamily ? {
+    default => 'root'
+  }
+
+  $config_file_template = 'itv_snmpd_hiera/snmpd.conf.erb'
+
+  $config_file_mode = $::osfamily ? {
+    default => '0644'
+  }
+
+  $var_net_snmp = $::osfamily ? {
+    /(?i:RedHat|CentOS)/ => $::lsbmajdistrelease ? {
+      '5'      => '/var/net-snmp',
+       default => '/var/lib/net-snmp'
     },
-    default         => '/etc/snmpd',
+    default => '/var/lib/net-snmp'
   }
-
-  $config_file = $::operatingsystem ? {
-    /(?i:Solaris)/  => $::operatingsystemrelease ? {
-      '5.10' => '/etc/snmp/conf/snmpd.conf',
-      '5.11' => '/etc/net-snmp/snmp/snmpd.conf',
-    },
-    /(?i:OpenBSD)/  => '/etc/snmpd.conf',
-    default         => '/etc/snmp/snmpd.conf',
-  }
-
-  $config_file_mode = $::operatingsystem ? {
-    /(?i:Solaris)/        => '0444',
-    /(?i:Debian|OpenBSD)/ => '0600',
-    default               => '0644',
-  }
-
-  $config_file_owner = $::operatingsystem ? {
-    default => 'root',
-  }
-
-  $config_file_group = $::operatingsystem ? {
-    /(?i:Solaris)/ => 'bin',
-    /(?i:OpenBSD)/ => 'wheel',
-    default        => 'root',
-  }
-
-  $config_file_init = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/                    => '/etc/default/snmpd',
-    /(?i:RedHat|Centos|Scientific|Linux|Amazon)/ => '/etc/sysconfig/snmpd.options',
-    /(?i:OpenBSD)/                               => '',
-    default                                      => '/etc/sysconfig/snmpd',
-  }
-
-  $pid_file = $::operatingsystem ? {
-    default => '/var/run/snmpd.pid',
-  }
-
-  $data_dir = $::operatingsystem ? {
-    default => '',
-  }
-
-  $log_dir = $::operatingsystem ? {
-    default => '',
-  }
-
-  $log_file = $::operatingsystem ? {
-    default => '',
-  }
-
-  $var_net_snmp = '/var/net/snmp'
-
-  $port = '161'
-  $protocol = 'udp'
-
-  # General Settings
-  $my_class = ''
-  $source = ''
-  $source_dir = ''
-  $source_dir_purge = false
-  $template = ''
-  $content = ''
-  $options = ''
-  $users  = ''
-  $service_autorestart = true
-  $version = 'present'
-  $absent = false
-  $disable = false
-  $disableboot = false
-
-  ### General module variables that can have a site or per module default
-  $monitor = false
-  $monitor_tool = ''
-  $monitor_target = $::ipaddress
-  $firewall = false
-  $firewall_tool = ''
-  $firewall_src = '0.0.0.0/0'
-  $firewall_dst = $::ipaddress
-  $puppi = false
-  $puppi_helper = 'standard'
-  $debug = false
-  $audit_only = false
-
 }

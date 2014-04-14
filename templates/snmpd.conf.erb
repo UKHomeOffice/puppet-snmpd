@@ -1,18 +1,19 @@
-### File managed with puppet ###
+### File managed with Puppet ###
 #
-## Served by:        '<%= scope.lookupvar('::servername') %>'
-## Module:           '<%= scope.to_hash['module_name'] %>'
-## Template source:  'MODULES<%= template_source.gsub(Regexp.new("^#{Puppet::Node::Environment.current[:modulepath].gsub(':','|')}"),"") %>'
-#
-
-sysName <%= scope.lookupvar('snmpd::snmpname') %>
-sysLocation <%= scope.lookupvar('snmpd::snmplocation') %>
-sysContact <%= scope.lookupvar('snmpd::snmpcontact') %>
-
-# The following is generated from snmpd::options
-<% scope.lookupvar('snmpd::options').each_pair do |key, value| %><%= key %> <%= value %>
+sysName <%= @data['sysname'] %>
+sysLocation "<%= @data['syslocation'] %>"
+sysContact <%= @data['syscontact'] %>
+sysServices 76
+<% if @data['usmuser'] %>
+<% @data['usmuser'].select do |user| %>
+<%= user['acl'] %> <%= user['user'] %> <%= user['secmode'] %>
 <% end %>
-
-# The following is generated from snmpd::users
-# <% scope.lookupvar('snmpd::users').each_pair do |key, value| %><%= key %> <%= value %>·
 <% end %>
+skipNFSInHostResources true
+storageUseNFS 1
+dontLogTCPWrappersConnects true
+<% 
+=begin %>
+TODO: traps
+<%
+=end %>

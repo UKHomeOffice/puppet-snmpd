@@ -1,32 +1,67 @@
+# == Define: create_snmpusm
 #
-# Defines a snmpd user
+# Description:
 #
-define snmpd::create_snmpusm {
+# === Parameters
+#
+#
+# === Examples
+#
+# === Authors
+#
+# === Copyright
+#
+define itv_snmpd_hiera::create_snmpusm (
   $authtype = 'SHA',
   $privtype = 'AES',
   $authpass = '',
   $privpass = '',
-)  {
-  include snmpd
+  $acl      = 'rouser',
+  $secmode  = 'noauth',
+) {
+
+  include itv_snmpd_hiera
+  include itv_snmpd_hiera::params
+
+  validate_re($secmode,'^noauth$|^auth$|^priv$')
+  validate_re($acl,'^rouser$|^rwuser$')
+
+  # Check to see that authpass and privpass are 8 characters or more long
+  if size($authpass) < 8 {
+    fail('passphrase chosen is below the length requirements - min: 8')
+  }
+
+  if $privpass and size($privpass) < 8 {
+    fail('passphrase chosen is below the length requirements - min: 8')
+  }
 
   if $privpass {
     $createcmd = "createUser ${title} ${authtype} ${authpass} ${privtype} ${privpass}"
   } else {
     $createcmd = "createUser ${title} ${authtype} ${authpass}"
   }
-  file { 'var_net_snmp':
-    ensure    => 'directory',
-    path      => $snmpd::config_file,
-    mode      => $snmpd::config_file_mode,
-    owner     => $snmpd::config_file_owner,
-    group     => $snmpd::config_file_group,
-    require   => $require_package,
-  }
 
-  exec { "create_auth_user_${title}":
-    user     => 'root',
-    command  => "service ${service_name} stop ; echo \"${createcmd}\" >>${snmp::params::var_net_snmp}/${daemon}.conf && touch ${snmp::params::var_net_snmp}/${title}",
-    creates  => "${snmp::params::var_net_snmp}/${title}",
-    require  => [ $require_package, File['var_net_snmp'], ],
+  $check_usm_user_exists = "awk \'/^usmUser/ {print \$5}\' ${itv_snmpd_hiera::params::var_net_snmp}/snmpd.conf | xxd -r -p | grep ${title} > /dev/null 2>&1"
+
+  if $itv_snmpd_hiera::config_file {
+    datacat_fragment {"var_net_snmp_${title}":
+      target => $itv_snmpd_hiera::config_file,
+        data => {
+          usmuser => [{
+            acl     => $acl,
+            secmode => $secmode,
+            user    => $title,
+          }],
+        },
+    }
+
+    exec {"create_auth_user_${title}":
+      path    => '/bin:/usr/bin:/sbin:/usr/sbin',
+      user    => 'root',
+      command => "/etc/init.d/${itv_snmpd_hiera::service_name} stop && echo \"${createcmd}\" >> ${itv_snmpd_hiera::params::var_net_snmp}/snmpd.conf",
+      unless  => $check_usm_user_exists,
+    }
+
+    Package[$itv_snmpd_hiera::package_name] -> Datacat_fragment["var_net_snmp_${title}"] -> Exec["create_auth_user_${title}"]
   }
 }
